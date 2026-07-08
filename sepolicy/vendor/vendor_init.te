@@ -1,0 +1,9 @@
+allow vendor_init cgroup:file r_file_perms;
+
+allow vendor_init watchdog_device:chr_file rw_file_perms;
+allow vendor_init block_device:lnk_file setattr;
+
+# Бэкпорт 18.1: тип vts_status_prop (свойство vts.native_server.on для VTS)
+# определён в system/sepolicy только с Android 12. В A11-базе его нет →
+# "unknown type vts_status_prop". Правило нужно лишь для VTS-тестов, не для загрузки — убрано.
+set_prop(vendor_init, vendor_soc_id_prop)
