@@ -143,3 +143,8 @@ on property:ro.bootmode=charger
     write /dev/watchdog "V"
 on property:ro.boot.verifiedbootstate=orange  # orange : unlocked state of GSI img
     write /dev/watchdog "V"
+# custom ROMs on this device report verifiedbootstate=green (spoofed for Play Integrity).
+# there is no watchdog-petting daemon here, so the softdog armed in early-init is never
+# fed and panics at soft_margin (100s). disarm it for the green state too.
+on property:ro.boot.verifiedbootstate=green
+    write /dev/watchdog "V"

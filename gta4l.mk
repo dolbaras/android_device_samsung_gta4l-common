@@ -23,6 +23,13 @@ PRODUCT_SHIPPING_API_LEVEL := 29
 # gta4l — не-A/B устройство; в 18.1 это поведение по умолчанию, отдельный inherit не нужен.
 # $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 
+# Disable Perfetto tracing: AOSP defaults persist.traced.enable=1, but on this device's
+# 4.19 kernel traced_probes crashes (SIGTRAP in libperfetto MergeFields/ProtoTranslationTable
+# during ftrace data-source setup) and init respawns it in a tight loop -> jank + tombstone
+# spam. Tracing is a dev-only feature; turn it off by default (product prop wins over system).
+PRODUCT_PRODUCT_PROPERTIES += \
+    persist.traced.enable=0
+
 # Enable updating of APEXes
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
