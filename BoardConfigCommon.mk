@@ -261,3 +261,11 @@ WIFI_DRIVER_STATE_ON := "ON"
 WIFI_HIDL_FEATURE_DUAL_INTERFACE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
+
+# Standard LineageOS board-config chain (Kernel build vars + Qcom defaults +
+# EXPORT_TO_SOONG). This include was missing from the backported device tree,
+# which left PATH_OVERRIDE_SOONG / KERNEL_MAKE_CMD etc. unregistered as
+# soong_config vars, breaking soong analysis of the inline-kernel
+# `generated_kernel_includes` module ("unknown variable $(PATH_OVERRIDE_SOONG)").
+# TARGET_KERNEL_SOURCE is set above, so kernel vars resolve correctly here.
+include vendor/lineage/config/BoardConfigLineage.mk

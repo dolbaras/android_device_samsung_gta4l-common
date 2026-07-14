@@ -1,0 +1,15 @@
+on post-fs-data
+    # DMS HAL (runs as audioserver) stores dax_sqlite3.db here; the dir must
+    # exist and be owned by audioserver or connectDolbyService fails.
+    mkdir /data/vendor/dolby 0770 audioserver audioserver
+
+on property:vendor.audio.init=1
+    start vendor.dolby.dms
+
+service vendor.dolby.dms /vendor/bin/hw/vendor.dolby.hardware.dms@1.0-service
+    class hal
+    user audioserver
+    group audio media system inet net_bt net_bt_admin
+    capabilities BLOCK_SUSPEND
+    ioprio rt 4
+    task_profiles ProcessCapacityHigh HighPerformance

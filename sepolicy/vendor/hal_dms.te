@@ -1,0 +1,46 @@
+# Dolby DMS HAL (vendor.dolby.hardware.dms@1.0-service) and its app clients
+# (com.dolby.daxservice / com.dolby.daxappui, both priv-apps).
+
+type hal_dms_default, domain;
+type hal_dms_default_exec, exec_type, vendor_file_type, file_type;
+
+init_daemon_domain(hal_dms_default)
+hwbinder_use(hal_dms_default)
+add_hwservice(hal_dms_default, hal_dms_hwservice)
+allow hal_dms_default hidl_base_hwservice:hwservice_manager add;
+
+# The DMS HAL is an audio post-processing manager: it talks to the audio HAL/server
+hal_client_domain(hal_dms_default, hal_audio)
+binder_call(hal_dms_default, audioserver)
+allow hal_dms_default audioserver_service:service_manager find;
+get_prop(hal_dms_default, vendor_audio_prop)
+get_prop(hal_dms_default, hwservicemanager_prop)
+
+# Dolby param storage lives under /data/vendor
+allow hal_dms_default vendor_data_file:dir create_dir_perms;
+allow hal_dms_default vendor_data_file:file create_file_perms;
+
+# Let the privileged control apps (daxService/daxUI) reach the HAL over hwbinder.
+# priv_app is not covered by the all_untrusted_apps hwservice neverallows, and
+# hal_dms_hwservice is intentionally not a protected_hwservice.
+hwbinder_use(priv_app)
+allow priv_app hal_dms_hwservice:hwservice_manager find;
+binder_call(priv_app, hal_dms_default)
+
+# The DAP effect (libswdap.so) is loaded by AudioFlinger and runs inside the
+# audioserver / hal_audio domain. Its native DlbEffectContext connects to the
+# Dolby DMS HAL to initialize the parameter store (getNumOfProfiles etc.); the
+# control app drives the effect through AudioEffect params, so this effect->HAL
+# path is what actually reads/writes profiles. Without it connectDolbyService
+# fails and DolbyAudioEffect ends up null in the UI.
+allow hal_audio_default hal_dms_hwservice:hwservice_manager find;
+binder_call(hal_audio_default, hal_dms_default)
+binder_call(hal_dms_default, hal_audio_default)
+
+# The DMS HAL's DolbyManagerService thread makes a binder CALL back into the
+# control app (daxService, a priv_app) to deliver profile/enable-state
+# notifications. binder_call(priv_app, hal_dms_default) above only grants the
+# app->HAL direction (+ transfer back), NOT the HAL->app call. Without this the
+# HAL callback is denied every ~1s and the UI shows Dolby as "disabled" even
+# though the effect is loaded and attached. Confirmed on-device via audit log.
+binder_call(hal_dms_default, priv_app)

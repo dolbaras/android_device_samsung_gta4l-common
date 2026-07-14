@@ -36,6 +36,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Get non-open-source specific aspects
 $(call inherit-product, vendor/samsung/gta4l-common/gta4l-common-vendor.mk)
 
+# Dolby Atmos (general DAX3 set + control app + DMS HAL)
+$(call inherit-product, device/samsung/gta4l-common/dolby/dolby.mk)
+
 PRODUCT_CHARACTERISTICS := tablet
 
 # AAPT
@@ -330,3 +333,11 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf
+
+# System Tweaks app: on-the-fly render (900/1080/1200p) + screen-record (900/1080/
+# 1200p) resolution control for the Adreno 610, which janks at native 2.4MP. Default
+# after a clean install is native; the app changes it live via IWindowManager and its
+# BootReceiver re-applies it on boot (restarting the launcher so the bottom home
+# gesture re-registers for the new size). See device/samsung/gta4l-common/SystemTweaks.
+PRODUCT_PACKAGES += \
+    SystemTweaks
