@@ -3,9 +3,4 @@
 *.disabled-*
 *.aosp-bak
 *.orig
-
-# Проприетарные Dolby-блобы — держим приватно, не в публичном device-репо.
-# Рецепт сборки (dolby.mk/Android.mk) публичный; сами .so/.apk кладите локально.
-# Proprietary Dolby blobs — keep private, not in the public device tree.
-dolby/vendor/
-dolby/priv-app/
+*.los-orig.bak
