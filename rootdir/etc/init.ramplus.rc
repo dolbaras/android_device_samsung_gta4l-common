@@ -1,3 +1,6 @@
 # KERNEL CORE MEMORY
 on property:sys.boot_completed=1
     swapon_all /vendor/etc/fstab.ramplus
+    # zram is the only swap device: read one page at a time from it instead of
+    # clustering 8 (swap-in from compressed RAM has no seek cost to amortize).
+    write /proc/sys/vm/page-cluster 0

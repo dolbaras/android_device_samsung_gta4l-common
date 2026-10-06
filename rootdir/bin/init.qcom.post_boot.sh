@@ -137,6 +137,12 @@ function enable_swap() {
     fi
 }
 
+function configure_memory_parameters() {
+# Not called on bengal (the vendor script has it disabled too): zram and the VM
+# swap tunables are owned by init.ramplus.rc (fstab.ramplus), lmkd owns low memory.
+# This header was lost when the script was trimmed, which left the body at top level
+# followed by a stray "}" - a syntax error that aborted the script before the bengal
+# section (schedutil, bus DCVS, LPM sleep, vendor.post_boot.parsed) ever ran.
 ProductName=`getprop ro.product.name`
 low_ram=`getprop ro.config.low_ram`
 
@@ -372,6 +378,10 @@ case "$target" in
 
             # Turn on sleep modes
             echo 0 > /sys/module/lpm_levels/parameters/sleep_disabled
+
+            # The only swap is zram (init.ramplus.rc): reclaim anon pages into it as
+            # readily as page cache is dropped.
+            echo 100 > /proc/sys/vm/swappiness
 
             ;;
         esac

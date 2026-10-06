@@ -30,14 +30,18 @@ TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := generic
-TARGET_CPU_VARIANT_RUNTIME := cortex-a75
+# SM6115 (Kryo 260) is Cortex-A73 + Cortex-A53, ARMv8.0: no LSE atomics, FP16 or
+# dotprod (/proc/cpuinfo: fp asimd aes pmull sha1 sha2 crc32). This variant is what
+# dex2oat/JIT compile Java code for; "cortex-a75" made ART emit ARMv8.2 instructions
+# and drop the Cortex-A53 erratum 835769/843419 workarounds.
+TARGET_CPU_VARIANT_RUNTIME := cortex-a73
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a75
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a73
 
 # ANT+
 BOARD_ANT_WIRELESS_DEVICE := "qualcomm-hidl"

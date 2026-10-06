@@ -1,0 +1,17 @@
+# System properties read by the Samsung vendor blobs: the camera HAL (camera.qcom.so)
+# and the RIL (libsec-ril.so, libsemnativecarrierfeature.so). They are set by the
+# Samsung framework, which this ROM does not have; with the default system_prop and
+# default_prop labels the vendor domains are denied even the lookup.
+persist.ims.mock.mno      u:object_r:exported_default_prop:s0
+persist.sys.omc_path      u:object_r:exported_system_prop:s0
+persist.sys.omc_support   u:object_r:exported_system_prop:s0
+persist.sys.omcnw_path    u:object_r:exported_system_prop:s0
+persist.sys.omcnw_path2   u:object_r:exported_system_prop:s0
+persist.sys.sec_cid       u:object_r:exported_system_prop:s0
+persist.sys.sec_cid2      u:object_r:exported_system_prop:s0
+persist.sys.sec_feature   u:object_r:exported_system_prop:s0
+persist.sys.sec_feature2  u:object_r:exported_system_prop:s0
+persist.sys.sec_pcid      u:object_r:exported_system_prop:s0
+ro.omc.region             u:object_r:exported_default_prop:s0
+ro.product_ship           u:object_r:exported_default_prop:s0
+service.camera.client     u:object_r:exported_system_prop:s0

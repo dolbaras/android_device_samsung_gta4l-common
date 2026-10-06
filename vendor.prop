@@ -1,7 +1,7 @@
 # Dalvik 
 dalvik.vm.heapstartsize=8m
-dalvik.vm.heapsize=256m
-dalvik.vm.heapgrowthlimit=128m
+dalvik.vm.heapsize=512m
+dalvik.vm.heapgrowthlimit=192m
 dalvik.vm.heaptargetutilization=0.75
 dalvik.vm.heapminfree=512k
 dalvik.vm.heapmaxfree=8m
@@ -141,10 +141,6 @@ persist.vendor.bt.aac_frm_ctl.enabled=true
 persist.vendor.qcom.bluetooth.aac_vbr_ctl.enabled=false
 persist.vendor.qcom.bluetooth.enable.splita2dp=true
 persist.vendor.qcom.bluetooth.scram.enabled=false
-persist.vendor.qcom.bluetooth.soc=cherokee
-# Бэкпорт 18.1: BT HAL (@1.0-service-qti) читает NON-persist vendor.qcom.bluetooth.soc; без него
-# берёт дефолт "pronto" → лезет в /dev/smd3 (нет на bengal) → Controller not ready → BT-краш.
-# Дублируем значение в non-persist (проверено вживую: BT поднимается, "Controller ready").
 vendor.qcom.bluetooth.soc=cherokee
 persist.vendor.qcom.bluetooth.twsp_state.enabled=false
 ro.bluetooth.a2dp_offload.supported=false

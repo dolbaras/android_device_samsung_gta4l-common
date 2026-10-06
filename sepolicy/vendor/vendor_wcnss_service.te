@@ -1,0 +1,9 @@
+# cnss-daemon binds its cnsscli control socket (cnss_user_server) in
+# /data/vendor/wifi/sockets and reads WLAN data from /mnt/vendor, as on the stock
+# firmware. Without the socket the daemon keeps polling the closed socket's
+# descriptor number, which later belongs to /dev/vndbinder, and spins on
+# "Failed to get sock name" (getsockname on a non-socket).
+allow vendor_wcnss_service vendor_wifi_vendor_wpa_socket:dir rw_dir_perms;
+allow vendor_wcnss_service vendor_wifi_vendor_wpa_socket:sock_file create_file_perms;
+allow vendor_wcnss_service mnt_vendor_file:dir search;
+allow vendor_wcnss_service mnt_vendor_file:file { read open };

@@ -1,0 +1,3 @@
+# time_daemon checks the RIL daemon by reading /proc/<pid>/comm, as on the stock
+# firmware.
+r_dir_file(vendor_time_daemon, rild)

@@ -28,9 +28,6 @@
 #
 #
 
-on early-init
-	write /dev/watchdog "s"
-
 on init
     chown root system /dev/watchdog
     chmod 0660 /dev/watchdog
@@ -138,13 +135,6 @@ on shutdown
 # service definition
 # on property triggers
 
-# watchdog disable in case of charger & GSI booting
-on property:ro.bootmode=charger
-    write /dev/watchdog "V"
-on property:ro.boot.verifiedbootstate=orange  # orange : unlocked state of GSI img
-    write /dev/watchdog "V"
-# custom ROMs on this device report verifiedbootstate=green (spoofed for Play Integrity).
-# there is no watchdog-petting daemon here, so the softdog armed in early-init is never
-# fed and panics at soft_margin (100s). disarm it for the green state too.
-on property:ro.boot.verifiedbootstate=green
-    write /dev/watchdog "V"
+# The Samsung userspace watchdog is not armed: opening /dev/watchdog starts the
+# softdog, and nothing in this ROM feeds it (stock does it from its framework), so
+# an armed softdog only panics the device after soft_margin (100s).

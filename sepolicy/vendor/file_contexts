@@ -37,6 +37,9 @@
 
 /sys/devices/virtual/sec/tsp(/.*)?    u:object_r:sysfs_tsp:s0
 /sys/devices/virtual/sec/switch(/.*)? u:object_r:sysfs_sec_switch:s0
-
-# Dolby DMS HAL service binary -> hal_dms_default domain (via init_daemon_domain)
 /vendor/bin/hw/vendor\.dolby\.hardware\.dms@1\.0-service    u:object_r:hal_dms_default_exec:s0
+
+# FUSE filesystems get anonymous bdi devices (major 0). vold sets their read-ahead
+# (ConfigureReadAheadForFuse); keep them out of the bengal rule that labels every
+# /sys/devices/virtual/bdi/*/read_ahead_kb as the eMMC host.
+/sys/devices/virtual/bdi/0:[0-9]+/read_ahead_kb    u:object_r:sysfs:s0

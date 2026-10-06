@@ -23,13 +23,6 @@ PRODUCT_SHIPPING_API_LEVEL := 29
 # gta4l — не-A/B устройство; в 18.1 это поведение по умолчанию, отдельный inherit не нужен.
 # $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 
-# Disable Perfetto tracing: AOSP defaults persist.traced.enable=1, but on this device's
-# 4.19 kernel traced_probes crashes (SIGTRAP in libperfetto MergeFields/ProtoTranslationTable
-# during ftrace data-source setup) and init respawns it in a tight loop -> jank + tombstone
-# spam. Tracing is a dev-only feature; turn it off by default (product prop wins over system).
-PRODUCT_PRODUCT_PROPERTIES += \
-    persist.traced.enable=0
-
 # Enable updating of APEXes
 $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
@@ -275,6 +268,10 @@ PRODUCT_PACKAGES += \
     libjson \
     libtinyxml
 
+# Drop Pixel- and US-carrier-only GApps (see RemovePackages/Android.mk)
+PRODUCT_PACKAGES += \
+    RemovePackages
+
 # QTI
 PRODUCT_PACKAGES += \
     libqti_vndfwk_detect.vendor \
@@ -333,11 +330,3 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     wpa_supplicant \
     wpa_supplicant.conf
-
-# System Tweaks app: on-the-fly render (900/1080/1200p) + screen-record (900/1080/
-# 1200p) resolution control for the Adreno 610, which janks at native 2.4MP. Default
-# after a clean install is native; the app changes it live via IWindowManager and its
-# BootReceiver re-applies it on boot (restarting the launcher so the bottom home
-# gesture re-registers for the new size). See device/samsung/gta4l-common/SystemTweaks.
-PRODUCT_PACKAGES += \
-    SystemTweaks

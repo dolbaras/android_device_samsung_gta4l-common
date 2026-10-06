@@ -485,9 +485,10 @@ on property:sys.boot_completed=1
     #Reinit lmkd to reconfigure lmkd properties
     setprop lmkd.reinit 1
 
-# corefile limit
-on property:persist.debug.trace=1
-    mkdir /data/core 0777 root root
+# corefile limit. A vendor property: vendor_init cannot read persist.debug.*, so the
+# old trigger never fired. Sticky so that crashing processes can only add dumps.
+on property:persist.vendor.debug.trace=1
+    mkdir /data/core 1777 root root
     write /proc/sys/kernel/core_pattern "/data/core/%E.%p.%e"
 
 on property:vendor.media.target.version=*

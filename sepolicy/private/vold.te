@@ -1,0 +1,6 @@
+# vold restores this policy's label on the per-user directories it prepares
+# (system/vold FsCrypt.cpp prepare_dir): a recovery built on Android 12 labels
+# /data/user/<id>, /data/user_de/<id> and /data/misc/profiles/cur/<id> with per-user
+# MLS categories (and the A12-only user_profile_root_file type), which locks
+# Bluetooth out of its data and ART out of the app profiles.
+allow vold { system_data_file user_profile_data_file }:dir { relabelfrom relabelto };

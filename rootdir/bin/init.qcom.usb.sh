@@ -160,14 +160,6 @@ if [ -d /config/usb_gadget ]; then
 	fi
 		setprop vendor.usb.configfs 1
 	
-	persist_comp=`getprop persist.sys.usb.config`
-	comp=`getprop sys.usb.config`
-	echo $persist_comp
-	echo $comp
-	if [ "$comp" != "$persist_comp" ]; then
-		echo "setting sys.usb.config"
-		setprop sys.usb.config $persist_comp
-	fi
 fi
 
 #
