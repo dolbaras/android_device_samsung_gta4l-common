@@ -272,4 +272,5 @@ WPA_SUPPLICANT_VERSION := VER_0_8_X
 # soong_config vars, breaking soong analysis of the inline-kernel
 # `generated_kernel_includes` module ("unknown variable $(PATH_OVERRIDE_SOONG)").
 # TARGET_KERNEL_SOURCE is set above, so kernel vars resolve correctly here.
-include vendor/lineage/config/BoardConfigLineage.mk
+# Optional: PixelExperience builds this tree too and sets these up in vendor/aosp.
+-include vendor/lineage/config/BoardConfigLineage.mk
