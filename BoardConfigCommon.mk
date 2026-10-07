@@ -79,10 +79,9 @@ TARGET_BOOTLOADER_BOARD_NAME := bengal
 TARGET_SCREEN_DENSITY := 240
 
 # Graphics
-# Бэкпорт 18.1: устройство на GRALLOC4 (mapper@4.0 + display.allocator-service, подтверждено
-# vintf-манифестом стока A11). TARGET_USES_GRALLOC1 инертен (0 потребителей в build/frameworks —
-# читается только display-source qcom-caf, который для bengal мы НЕ собираем: display-HAL = блобы A11).
-# Оставлять ':= true' на gralloc4-устройстве вводит в заблуждение → отключено.
+# The device uses gralloc4 (mapper@4.0 and display.allocator-service, as in the stock Android 11
+# VINTF manifest). TARGET_USES_GRALLOC1 is only read by the qcom-caf display source, which is not
+# built for bengal (the display HAL comes from the stock blobs), so it is not set.
 # TARGET_USES_GRALLOC1 := true
 TARGET_USES_HWC2 := true
 TARGET_USES_ION := true
@@ -110,20 +109,17 @@ BOARD_DTB_OFFSET := 0x1F00000
 BOARD_MKBOOTIMG_ARGS := --kernel_offset $(BOARD_KERNEL_OFFSET) --ramdisk_offset $(BOARD_RAMDISK_OFFSET) --tags_offset $(BOARD_KERNEL_TAGS_OFFSET) --dtb_offset $(BOARD_DTB_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-# Бэкпорт 18.1: в LOS18.1 vendor/lineage kernel.mk TARGET_KERNEL_CLANG_COMPILE по умолчанию
-# false, поэтому ядро собиралось древним GCC 4.9 → "GCC too old, use 5.1+" (ядро 4.19 требует 5.1+).
-# В LOS20 (откуда бэкпортим дерево) дефолт уже true, поэтому оригинал его не задавал. Включаем
-# явно — сборка идёт clang (дефолт 18.1: clang-r383902b/clang-11) + GCC-4.9 binutils как as/ld.
+# vendor/lineage kernel.mk in 18.1 defaults TARGET_KERNEL_CLANG_COMPILE to false, and the 4.19
+# kernel refuses GCC 4.9 ("GCC too old, use 5.1+"). Build it with clang (clang-r383902b) and the
+# GCC 4.9 binutils as assembler and linker.
 TARGET_KERNEL_CLANG_COMPILE := true
-# Бэкпорт 18.1: QTI-prebuilt dtc через DTC_EXT (а НЕ DTC=, как в исходном LOS20-дереве). Ключевое:
-#  * DTC= форсит бинарь, но НЕ выставляет DTC_EXT → ядро всё равно добавляет -Wno-simple_bus_reg и пр.
-#    (scripts/Makefile.lib: ifeq($(DTC_EXT),)), а prebuilt dtc 1.4.2/1.4.4 не знает этих проверок →
-#    "FATAL ERROR: Unrecognized check name". Именно поэтому исходный DTC= ломался на 18.1.
-#  * DTC_EXT= и указывает dtc, И пропускает те -Wno-флаги → база (bengal.dtb) компилится чисто.
-#  * DT-overlay'и (.dtbo, формат fragment+target=<0xffffffff> без /plugin/;) требуют fixup-режим.
-#    Собственный kernel/scripts/dtc — upstream: fixups только для /plugin/ (dtc.c:323), даёт assert.
-#    А QTI "Android-build" dtc по -@ генерит И __symbols__, И __fixups__ (проверено на P85946-overlay).
-# Итог: DTC_EXT=QTI-dtc + "-@" в DTC_FLAGS (добавлен в scripts/Makefile.lib) собирают и базу, и overlay.
+# The QTI prebuilt dtc, passed as DTC_EXT rather than DTC:
+#  * With DTC alone the kernel still adds -Wno-simple_bus_reg and similar flags
+#    (scripts/Makefile.lib: ifeq($(DTC_EXT),)), which the prebuilt dtc 1.4.x rejects with
+#    "FATAL ERROR: Unrecognized check name". DTC_EXT selects the binary and drops those flags.
+#  * The overlays (.dtbo: fragments with target=<0xffffffff>, no /plugin/) need fixups. The
+#    kernel's own dtc only generates them for /plugin/ sources and asserts; the QTI dtc
+#    generates __symbols__ and __fixups__ with -@, which scripts/Makefile.lib adds to DTC_FLAGS.
 TARGET_KERNEL_ADDITIONAL_FLAGS := DTC_EXT=$(shell pwd)/prebuilts/misc/$(HOST_OS)-x86/dtc/dtc
 TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_SOURCE := kernel/samsung/sm6115

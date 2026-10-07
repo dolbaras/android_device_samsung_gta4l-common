@@ -23,10 +23,9 @@ source "${HELPER}"
 
 function blob_fixup() {
     case "${1}" in
-        # Бэкпорт 18.1: patchelf libutils→libutils-v30 / libui→libui-v30 УБРАН.
-        # Это кросс-версионный хак (A11/A12-блобы в новом ROM). У нас A11-на-A11 (VNDK 30):
-        # блобы health@2.0-impl-2.1-samsung и libgui_vendor нативно линкуют libutils.so/libui.so
-        # VNDK-30, предоставляемые ROM. Соответствующие копии *-v30 из gta4l.mk тоже удалены.
+        # No patchelf to libutils-v30/libui-v30: on Android 11 (VNDK 30) the stock
+        # health@2.0-impl-2.1-samsung and libgui_vendor link the platform's libutils.so
+        # and libui.so directly (see gta4l.mk).
 	vendor/lib64/vendor.qti.hardware.camera.postproc@1.0-service-impl.so)
             "${SIGSCAN}" -p "13 0A 00 94" -P "1F 20 03 D5" -f "${2}"
             ;;

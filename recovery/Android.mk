@@ -6,8 +6,8 @@ LOCAL_C_INCLUDES := \
     bootable/recovery/edify/include \
     bootable/recovery/otautil/include \
     bootable/recovery/updater/include
-# Бэкпорт 18.1: в Android 11 libbase лежит в system/core/base (в A12+ вынесен в system/libbase).
-# Вместо хардкода пути используем Soong header-lib libbase_headers (путь-независимо).
+# libbase lives in system/core/base on Android 11 (system/libbase from Android 12 on), so use
+# the libbase_headers header library instead of a path.
 LOCAL_HEADER_LIBRARIES := libbase_headers
 LOCAL_SRC_FILES := recovery_updater.cpp
 LOCAL_MODULE := librecovery_updater_samsung

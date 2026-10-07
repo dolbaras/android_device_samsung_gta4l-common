@@ -154,9 +154,9 @@ vendor/lib/libcamera_nn_stub.so
 vendor/lib/libcamxfacialfeatures.so
 vendor/lib/libcamxfdalgo.so
 vendor/lib/libcamxfdengine.so
-# Бэкпорт 18.1: 32-битный libcamxexternalformatutils.so был пропущен (в списке только lib64 стр.323).
-# cameraserver 32-битный → его gralloc dlopen'ит эту 32-бит либу за CamxFormatUtil_GetStrideInBytes;
-# без неё "Failed to link" → буферы камеры не считаются → камера не открывается. Проверено вживую: чинит.
+# 32-bit libcamxexternalformatutils.so: cameraserver is 32-bit and its gralloc dlopens this
+# library for CamxFormatUtil_GetStrideInBytes; without it camera buffers cannot be allocated
+# and the camera does not open.
 vendor/lib/libcamxexternalformatutils.so
 vendor/lib/libcamximageformatutils.so
 vendor/lib/libcamxncs.so
@@ -1123,16 +1123,15 @@ vendor/lib/vendor.qti.hardware.vpp@1.2.so
 vendor/lib64/vendor.qti.hardware.vpp@1.1.so
 vendor/lib64/vendor.qti.hardware.vpp@1.2.so
 
-# Vaultkeeper — ОТКЛЮЧЁН (бэкпорт 18.1). Samsung security-TA vaultkeeper в A12-TrustZone отвергает
-# A11-blob vaultkeeperd (Error TA side -10004) → бесконечный крэш-цикл → sys.init.updatable_crashing
-# (тот самый «краш перед рабочим столом»). Откатить прошивку на A11 нельзя (ARB). Vaultkeeper и так
-# фактически не работает, но система справляется (проверено: stop vaultkeeper — RIL/boot целы). Убираем
-# его init-.rc (сервис не определяется → не стартует) и vintf-фрагмент (HAL не объявляется). Бинари/libs
-# оставляем — безвредны без запуска. Это Knox-security, для WiFi/RIL/камеры/аудио не нужен.
+# Vaultkeeper is disabled. The vaultkeeper trusted app of the Android 12 TrustZone rejects the
+# Android 11 vaultkeeperd (TA error -10004), which then crash-loops until
+# sys.init.updatable_crashing stops the boot. The firmware cannot be rolled back (anti-rollback).
+# Vaultkeeper is a Knox security service that Wi-Fi, RIL, camera and audio do not need, so its
+# init script and VINTF fragment are left out; the binaries stay, inert without them.
 vendor/bin/vaultkeeperd
 vendor/bin/vendor.samsung.hardware.security.vaultkeeper@2.0-service
-# vendor/etc/init/vaultkeeper_common.rc            <- НЕ ставим: отключает автозапуск vaultkeeper
-# -vendor/etc/vintf/manifest/vaultkeeper_manifest.xml  <- НЕ ставим: убираем vintf-объявление HAL
+# vendor/etc/init/vaultkeeper_common.rc            <- left out: vaultkeeper does not start
+# -vendor/etc/vintf/manifest/vaultkeeper_manifest.xml  <- left out: the HAL is not declared
 vendor/lib64/libdsms_vendor.so
 vendor/lib64/libvkmanager_vendor.so
 vendor/lib64/libvkservice.so
@@ -1160,7 +1159,7 @@ vendor/firmware/scuba_ipa_fws.b04
 vendor/firmware/scuba_ipa_fws.elf
 vendor/firmware/scuba_ipa_fws.mdt
 
-# Display (A11 prebuilt HAL — LOS18.1 не имеет bengal display-source; gralloc4-стек из стока A11)
+# Display (A11 prebuilt HAL: there is no bengal display source for Android 11; gralloc4 stack from stock A11)
 vendor/bin/hw/android.hardware.memtrack@1.0-service
 vendor/bin/hw/vendor.display.color@1.0-service
 vendor/bin/hw/vendor.qti.hardware.display.allocator-service

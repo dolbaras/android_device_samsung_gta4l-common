@@ -1,5 +1,3 @@
 set_prop(hal_camera_default, cam_prop)
-# Бэкпорт 18.1: get_prop(default_prop/system_prop) для камеры НЕЛЬЗЯ — neverallow
-# compatible_property_only (property.te:396) запрещает vendor-домену core_property_type. Правильный
-# фикс (follow-up): relabel конкретных читаемых камерой пропов в vendor-тип через property_contexts.
-# Пока оставляем как было; после флеша проверить, критичны ли denial'ы для работы камеры.
+# The system properties the camera blobs read are labelled as exported types in
+# private/property_contexts; a vendor domain may not read default_prop or system_prop.

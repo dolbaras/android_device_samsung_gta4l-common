@@ -19,8 +19,8 @@ BOARD_API_LEVEL := 30
 BOARD_SHIPPING_API_LEVEL := 30
 PRODUCT_SHIPPING_API_LEVEL := 29
 
-# Backport 18.1: non_ab_device.mk отсутствует в build/make lineage-18.1 (появился в A12+).
-# gta4l — не-A/B устройство; в 18.1 это поведение по умолчанию, отдельный inherit не нужен.
+# Android 11: build/make has no non_ab_device.mk (added in Android 12). gta4l is a
+# non-A/B device, which is the default here, so no separate inherit is needed.
 # $(call inherit-product, $(SRC_TARGET_DIR)/product/non_ab_device.mk)
 
 # Enable updating of APEXes
@@ -135,12 +135,11 @@ PRODUCT_PACKAGES += \
     ueventd.qcom.rc
 
 # Display
-# Бэкпорт 18.1: LineageOS 18.1 НЕ содержит QTI display-HAL для bengal (нет ветки
-# lineage-18.1-caf-bengal у android_hardware_qcom_display; поддержка появилась только с 19.1/20).
-# Решение: весь gralloc4/composer-стек берём PREBUILT-БЛОБАМИ из стока A11 (Android 11 = тот же
-# фреймворк, ABI mapper@4.0 совпадает 1:1) — см. proprietary-files.txt секцию "Display (A11 prebuilt HAL)".
-# Поэтому source-сборка display-модулей здесь отключена (модули gralloc.bengal/mapper-impl-qti-display
-# и т.д. в 18.1-дереве отсутствуют как исходники).
+# Android 11 has no QTI display HAL source for bengal (android_hardware_qcom_display has no
+# lineage-18.1-caf-bengal branch; support starts with 19.1/20). The whole gralloc4/composer
+# stack comes as prebuilt blobs from the stock Android 11 firmware, whose mapper@4.0 ABI
+# matches this framework; see "Display (A11 prebuilt HAL)" in proprietary-files.txt. The
+# display modules (gralloc.bengal, mapper-impl-qti-display, ...) are therefore not built here.
 
 # DRM
 PRODUCT_PACKAGES += \
@@ -307,13 +306,11 @@ PRODUCT_PACKAGES += \
     android.hardware.usb@1.3-service-qti
 
 # VNDK
-# Бэкпорт 18.1: удалён кросс-версионный VNDK-хак. Оригинал копировал 5 либ из снапшота
-# prebuilts/vndk/v30/ (в LOS20/A13 v30 — СТАРЫЙ снапшот; версионные libutils-v30/libui-v30 +
-# patchelf нужны, когда A11/A12-блобы линкуются в новом ROM). У нас: LOS 18.1 = Android 11 =
-# VNDK 30 = ТЕКУЩАЯ платформа (снапшота v30 нет; манифест имеет только v27/v28/v29), собирается
-# из исходников. Блобы стока A11 нативно линкуют libutils.so/libui.so/VNDK-SP (common/graphics.common)
-# VNDK-30, которые предоставляет сам ROM. Поэтому копии не нужны, и patchelf→*-v30 в extract-files.sh
-# тоже убран (блобы health/libgui_vendor используют нативные либы).
+# No VNDK v30 snapshot libraries. The newer tree this was ported from copied libutils-v30 and
+# libui-v30 from prebuilts/vndk/v30 and patchelf'd the blobs to them, which a newer platform
+# needs for Android 11 blobs. Here the platform itself is Android 11 (VNDK 30), built from
+# source, and the stock Android 11 blobs link its libutils, libui and VNDK-SP libraries
+# directly; extract-files.sh does not patchelf them either.
 
 # WiFi
 PRODUCT_COPY_FILES += \

@@ -6,6 +6,5 @@ vendor_internal_prop(vendor_qseecomd_prop)
 vendor_internal_prop(vendor_vaultkeeperd_prop)
 vendor_internal_prop(vendor_wt_rpmb_status_prop)
 vendor_internal_prop(gps_prop)
-# Бэкпорт 18.1: vendor_soc_id_prop/vendor_radio_prop/vendor_bluetooth_prop здесь НЕ объявляем —
-# они уже приходят из device/qcom/sepolicy_vndr/generic/vendor/common/property.te (soc_id:113,
-# radio:50, bluetooth:68). Дублирующее объявление давало "Duplicate declaration of type".
+# vendor_soc_id_prop, vendor_radio_prop and vendor_bluetooth_prop are declared in
+# device/qcom/sepolicy_vndr/generic/vendor/common/property.te, not here.

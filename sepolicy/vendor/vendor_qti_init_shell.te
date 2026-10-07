@@ -1,3 +1,2 @@
-# Бэкпорт 18.1: get_prop(vendor_qti_init_shell, usb_control_prop) убран — тип
-# usb_control_prop появился в AOSP system/sepolicy с Android 12, в A11-базе его нет.
-# В A11 usb-control свойства помечены другими типами; правило было лишь avc-allow (не критично).
+# No get_prop(vendor_qti_init_shell, usb_control_prop): the type only exists from Android 12 on;
+# Android 11 labels the USB control properties with other types.
