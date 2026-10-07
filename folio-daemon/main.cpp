@@ -27,6 +27,10 @@
 
 // Hall-effect sensor type
 #define SENSOR_TYPE 65600
+// Minimum interval between events of this on-change sensor. The Samsung sensor HAL
+// takes Hall sensor samples at the requested rate, and the sensor's min delay of 0
+// made sensorservice pick 1 ms: a thousand samples a second, ~4% of a core while idle.
+#define SAMPLING_PERIOD_US 100000
 
 #define RETRY_LIMIT     120
 #define RETRY_PERIOD    30          // 30 seconds
@@ -45,7 +49,6 @@ int main(void) {
     ASensorRef hallSensor;
     ALooper *looper;
     ASensorEventQueue *eventQueue = nullptr;
-    int32_t hallMinDelay = 0;
     time_t lastWarn = 0;
     int attemptCount = 0;
 
@@ -107,7 +110,6 @@ int main(void) {
         hallSensor = ASensorManager_getDefaultSensor(sensorManager,
                                                      SENSOR_TYPE);
         if (hallSensor != nullptr) {
-            hallMinDelay = ASensor_getMinDelay(hallSensor);
             break;
         }
 
@@ -123,7 +125,7 @@ int main(void) {
     }
 
     err = ASensorEventQueue_registerSensor(eventQueue, hallSensor,
-                                           hallMinDelay, 10000);
+                                           SAMPLING_PERIOD_US, 10000);
     if (err < 0) {
         ALOGE("Unable to register for Hall-effect sensor events");
         goto out;
