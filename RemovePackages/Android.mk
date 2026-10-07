@@ -7,8 +7,9 @@
 LOCAL_PATH := $(call my-dir)
 
 # Apps the Pixel GApps set ships that only work on Pixel phones or with US carriers
-# (Google Fi, Verizon, Sprint, US Cellular device management, CBRS, Pixel modem
-# config, Pixel crash detection / Now Playing / diagnostics / retail demo). On this
+# (Google Fi, Verizon device management and app-directed SMS, Sprint, US Cellular
+# device management, CBRS, Pixel modem config, Pixel crash detection / Now
+# Playing / diagnostics / retail demo). On this
 # tablet they cannot work but still take space and, for some, run in the background.
 # Overriding removes them from the product without editing the GApps package list.
 include $(CLEAR_VARS)
@@ -19,6 +20,7 @@ LOCAL_SRC_FILES := /dev/null
 LOCAL_UNINSTALLABLE_MODULE := true
 LOCAL_OVERRIDES_MODULES := \
     AmbientSensePrebuilt \
+    AppDirectedSMSService \
     CarrierWifi \
     CbrsNetworkMonitor \
     ConnMO \
@@ -27,6 +29,7 @@ LOCAL_OVERRIDES_MODULES := \
     DiagnosticsToolPrebuilt \
     MyVerizonServices \
     NovaBugreportWrapper \
+    OBDM_Permissions \
     RilConfigService \
     SafetyHubPrebuilt \
     Showcase \
@@ -36,5 +39,6 @@ LOCAL_OVERRIDES_MODULES := \
     USCCDM \
     VZWAPNLib \
     WfcActivation \
-    grilservice
+    grilservice \
+    obdm_stub
 include $(BUILD_PREBUILT)
